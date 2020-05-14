@@ -182,7 +182,6 @@ class Connection extends EventEmitter {
   };
 
   connect = async () => {
-    this.setScriptName(this.getScriptName());
     await this._connect();
     if (this.key) {
       await this.authenticate();

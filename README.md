@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/gh/gitchrisqueen/deribit-v2-ws/branch/master/graph/badge.svg)](https://codecov.io/gh/gitchrisqueen/deribit-v2-ws)
+
 # deribit-v2-ws
 
 Deribit V2 API WS RPC wrapper.

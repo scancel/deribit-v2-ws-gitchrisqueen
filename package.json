@@ -4,7 +4,9 @@
   "description": "deribit v2 ws api wrapper",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "testdebug": "jest --detectOpenHandles",
+    "killall": "killall node && killall jest"
   },
   "repository": {
     "type": "git",
