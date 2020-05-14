@@ -19,7 +19,7 @@ jobs:
       - run: |
           npm ci
           npm version patch -m 'Upgrade to %s after new code commit test(s) passed'
-        env:
+      - env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - name: Archive code coverage results
         if: always()
