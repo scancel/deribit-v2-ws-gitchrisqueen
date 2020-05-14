@@ -1,6 +1,6 @@
 {
   "name": "deribit-v2-ws-gitchrisqueen",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "deribit v2 ws api wrapper",
   "main": "index.js",
   "scripts": {
