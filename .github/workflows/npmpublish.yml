@@ -20,7 +20,7 @@ jobs:
           node-version: 14
       - run: npm ci
       - run:  git config --global user.name gitchrisqueen
-      - run: npm version patch -m 'Upgrade to %s after new code commit test(s) passed'
+      - run: npm version patch -m 'Upgrade verstion patch after new code commit test(s) passed'
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - name: Archive code coverage results
