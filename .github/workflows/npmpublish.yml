@@ -9,7 +9,7 @@ on:
     branches: [ master ]
 jobs:
   build:
-    - name: Run Test and Update version number on success
+    name: Run Test and Update version number on success
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
