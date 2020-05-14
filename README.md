@@ -1,3 +1,5 @@
+[![Node.js Package](https://github.com/gitchrisqueen/deribit-v2-ws-gitchrisqueen/workflows/Node.js%20Package/badge.svg)](https://github.com/gitchrisqueen/deribit-v2-ws-gitchrisqueen/actions?query=workflow%3A%22Node.js+Package%22)
+
 [![codecov](https://codecov.io/gh/gitchrisqueen/deribit-v2-ws/branch/master/graph/badge.svg)](https://codecov.io/gh/gitchrisqueen/deribit-v2-ws)
 
 # deribit-v2-ws
