@@ -1,12 +1,15 @@
 {
   "name": "deribit-v2-ws",
-  "version": "1.0.11",
+  "version": "1.0.11.2",
   "description": "deribit v2 ws api wrapper",
   "main": "index.js",
   "scripts": {
     "test": "jest",
     "testdebug": "jest --detectOpenHandles",
-    "killall": "killall node && killall jest"
+    "killall": "killall node && killall jest",
+    "preversion": "npm test",
+    "version": "npm run build --if-present && git add -A dist",
+    "postversion": "git push && git push --tags && rm -rf build/temp"
   },
   "repository": {
     "type": "git",
