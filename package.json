@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/askmike/deribit-v2-ws.git"
+    "url": "git+https://github.com/gitchrisqueen/deribit-v2-ws.git"
   },
   "keywords": [
     "deribit",
@@ -18,12 +18,12 @@
     "v2",
     "api"
   ],
-  "author": "",
+  "author": "Christopher Queen<christopher.queen@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/askmike/deribit-v2-ws/issues"
+    "url": "https://github.com/gitchrisqueen/deribit-v2-ws/issues"
   },
-  "homepage": "https://github.com/askmike/deribit-v2-ws#readme",
+  "homepage": "https://github.com/gitchrisqueen/deribit-v2-ws#readme",
   "dependencies": {
     "ws": "^6.2.0"
   },
