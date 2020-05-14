@@ -19,6 +19,7 @@ jobs:
         with:
           node-version: 14
       - run: npm ci
+      - run: git config --global
       - run: npm version patch -m 'Upgrade to %s after new code commit test(s) passed'
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
