@@ -7,10 +7,6 @@ on:
   push:
     # Publish `master` as Docker `latest` image.
     branches: [ master ]
-    # Publish `v1.2.3` tags as releases.
-    tags:
-      - v*
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -19,9 +15,12 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 14
+      - name: Run Test and Update version number on success
       - run: |
           npm ci
           npm version patch -m 'Upgrade to %s after new code commit test(s) passed'
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - name: Archive code coverage results
         if: always()
         uses: actions/upload-artifact@v1
