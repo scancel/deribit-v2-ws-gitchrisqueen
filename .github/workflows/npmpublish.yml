@@ -9,16 +9,15 @@ on:
     branches: [ master ]
 jobs:
   build:
+    - name: Run Test and Update version number on success
     runs-on: ubuntu-latest
     steps:
-      - name: Run Test and Update version number on success
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
           node-version: 14
-      - run: |
-          npm ci
-          npm version patch -m 'Upgrade to %s after new code commit test(s) passed'
+      - run: npm ci
+      - run: npm version patch -m 'Upgrade to %s after new code commit test(s) passed'
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - name: Archive code coverage results
