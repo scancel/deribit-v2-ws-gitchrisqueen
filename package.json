@@ -1,15 +1,15 @@
 {
   "name": "deribit-v2-ws-gitchrisqueen",
-  "version": "1.0.11.3",
+  "version": "1.0.12",
   "description": "deribit v2 ws api wrapper",
   "main": "index.js",
   "scripts": {
+    "pretest": "npm install",
     "test": "jest",
     "testdebug": "jest --detectOpenHandles",
     "killall": "killall node && killall jest",
-    "preversion": "npm test",
-    "versionAdvanced": "npm run build --if-present && git commit -m 'Test passed. Changing version'",
-    "version": "npm run build --if-present && git commit -m 'Test passed. Changing version' ./",
+    "preversion": "npm run test",
+    "version": "",
     "postversion": "git push && git push --tags && rm -rf build/temp"
   },
   "repository": {
