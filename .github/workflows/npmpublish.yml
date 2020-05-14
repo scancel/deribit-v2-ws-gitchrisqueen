@@ -21,7 +21,7 @@ jobs:
           node-version: 14
       - run: |
           npm ci
-          npm run version from-git -m 'Upgrade to %s after new code commit test(s) passed'
+          npm version patch -m 'Upgrade to %s after new code commit test(s) passed'
       - name: Archive code coverage results
         if: always()
         uses: actions/upload-artifact@v1
