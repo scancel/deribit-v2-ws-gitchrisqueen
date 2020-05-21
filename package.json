@@ -10,7 +10,8 @@
     "killall": "killall node && killall jest",
     "preversion": "npm run test",
     "version": "",
-    "postversion": "git push && git push --tags && rm -rf build/temp"
+    "postversion": "git push && git push --tags && rm -rf build/temp",
+    "patch": "git fetch && git pull && npm version patch -m 'Updating with new patch'"
   },
   "repository": {
     "type": "git",

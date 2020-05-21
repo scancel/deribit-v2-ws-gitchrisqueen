@@ -480,8 +480,8 @@ class Connection extends EventEmitter {
         {
           'instrument_name': instrument
         })
-        .catch((error) => {
-          this.log(`Could not return after getPosition() : `, error);
+        .catch((e) => {
+          this.log(`Could not return after getPosition() : `, e.message);
           throw new Error(`Could not return after getPosition()`);
         });
   }
@@ -494,7 +494,7 @@ class Connection extends EventEmitter {
       'resolution': resolution
     })
         .catch((e) => {
-          this.log(`Could not return after get_tradingview_chart_data() Error: `, e)
+          this.log(`Could not return after get_tradingview_chart_data() Error: `, e.message)
           throw new Error(`Could not return after get_tradingview_chart_data()`);
         });
   }
@@ -502,7 +502,7 @@ class Connection extends EventEmitter {
   async buy(options) {
     return await this.request('private/buy', options)
         .catch((e) => {
-          this.log(`Could not return after buy() Error: `, e);
+          this.log(`Could not return after buy() Error: `, e.message);
           throw new Error(`Could not return after buy()`);
         });
   }
@@ -510,7 +510,7 @@ class Connection extends EventEmitter {
   async sell(options) {
     return await this.request('private/sell', options)
         .catch((e) => {
-          this.log(`Could not return after sell() Error: `, e);
+          this.log(`Could not return after sell() Error: `, e.message);
           throw new Error(`Could not return after sell()`);
         });
     ;
@@ -521,8 +521,8 @@ class Connection extends EventEmitter {
       'instrument_name': instrument,
       'type': type
     })
-        .catch((error) => {
-          this.log(`Could not return after get_open_orders_by_instrument() Error: `, error);
+        .catch((e) => {
+          this.log(`Could not return after get_open_orders_by_instrument() Error: `, e.message);
           throw new Error(`Could not return after get_open_orders_by_instrument()`);
         });
   }
@@ -534,7 +534,7 @@ class Connection extends EventEmitter {
       'count': count
     })
         .catch(e => {
-          this.log(`Could not return after get_stop_order_history() Error: `, e);
+          this.log(`Could not return after get_stop_order_history() Error: `, e.message);
           throw new Error(`Could not return after get_stop_order_history()`);
         });
   }
@@ -560,7 +560,7 @@ class Connection extends EventEmitter {
   async enable_cancel_on_disconnect() {
     return await this.request('private/enable_cancel_on_disconnect')
         .catch((e) => {
-          this.log(`Could not return after enable_cancel_on_disconnect() Error: `, e);
+          this.log(`Could not return after enable_cancel_on_disconnect() Error: `, e.message);
           throw new Error(`Could not return after enable_cancel_on_disconnect()`);
         });
   }
@@ -568,7 +568,7 @@ class Connection extends EventEmitter {
   async disable_cancel_on_disconnect() {
     return await this.request('private/disable_cancel_on_disconnect')
         .catch((e) => {
-          this.log(`Could not return after disable_cancel_on_disconnect() Error: `, e);
+          this.log(`Could not return after disable_cancel_on_disconnect() Error: `, e.message);
           throw new Error(`Could not return after disable_cancel_on_disconnect()`);
         });
   }
@@ -579,7 +579,7 @@ class Connection extends EventEmitter {
           'currency': currency,
           'extended': extended
         }).catch((e) => {
-      this.log(`Could not return after get_account_summary() Error: `, e);
+      this.log(`Could not return after get_account_summary() Error: `, e.message);
       throw new Error(`Could not return after get_account_summary()`);
     });
   }
@@ -601,7 +601,7 @@ class Connection extends EventEmitter {
         {
           'instrument_name': instrument
         }).catch((e) => {
-      this.log(`Could not return after get_book_summary_by_instrument() Error: `, e);
+      this.log(`Could not return after get_book_summary_by_instrument() Error: `, e.message);
       throw new Error(`Could not return after get_book_summary_by_instrument()`);
     });
   }
@@ -611,7 +611,7 @@ class Connection extends EventEmitter {
         {
           'instrument_name': instrument
         }).catch((e) => {
-      this.log(`Could not return after get_ticker() Error: `, e);
+      this.log(`Could not return after get_ticker() Error: `, e.message);
       throw new Error(`Could not return after get_ticker()`);
     });
   }

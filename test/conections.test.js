@@ -25,3 +25,4 @@ test('connect() expects properties[ connection:true,token,refreshToken,authentic
     expect(con).toHaveProperty('refreshToken');
     expect(con).toHaveProperty('authenticated',true);
 });
+
