@@ -458,7 +458,7 @@ class Connection extends EventEmitter {
           'label': label
         })
         .catch((e) => {
-          this.log(`Could not return after cancel_order_by_label() Error : `, e);
+          this.log(`Could not return after cancel_order_by_label() Error : `, e.message);
           //throw new Error(`Could not return after cancel_order_by_label()`);
         });
   }
@@ -470,7 +470,7 @@ class Connection extends EventEmitter {
           'type': type
         })
         .catch((e) => {
-          this.log(`Could not return after close_position() Error: `, e);
+          this.log(`Could not return after close_position() Error: `, e.message);
           throw new Error(`Could not return after close_position()`);
         });
   }
@@ -552,7 +552,7 @@ class Connection extends EventEmitter {
     }
     return await this.request(`private/edit`, orderEditOptions)
         .catch((e) => {
-          this.log(`Could not return after editOrder() : `, e);
+          this.log(`Could not return after editOrder() : `, e.message);
           throw new Error(`Could not return after editOrder()`);
         });
   }
