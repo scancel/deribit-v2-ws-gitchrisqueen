@@ -5,8 +5,6 @@
 const WebSocket = require('ws');
 const EventEmitter = require('events');
 
-const wait = n => new Promise(r => setTimeout(r, n));
-
 class Connection extends EventEmitter {
     constructor({key, secret, domain = 'www.deribit.com', debug = false}) {
         super();
@@ -53,7 +51,13 @@ class Connection extends EventEmitter {
             this.log(new Date, `Handle ERROR: ${JSON.stringify(e)}`);
         }
         throw new Error(e);
-    };
+    }
+
+    handleOnOpen(){
+        this.connected = true;
+        this.pingInterval = setInterval(this.ping, (this.heartBeat * 1000) * 5); // 5X the heart beat without a ping means connection is dead
+        this.isReadyHook();
+    }
 
     _connect() {
         if (this.connected) {
@@ -65,11 +69,7 @@ class Connection extends EventEmitter {
             this.ws.onmessage = this.handleWSMessage;
 
             this.ws.onopen = () => {
-                this.connected = true;
-
-                this.pingInterval = setInterval(this.ping, (this.heartBeat * 1000) * 5); // 5X the heart beat without a ping means connection is dead
-
-                this.isReadyHook();
+                this.handleOnOpen();
                 resolve();
             }
             this.ws.onerror = this.handleError;
@@ -119,8 +119,6 @@ class Connection extends EventEmitter {
         });
 
         return promise;
-
-
     }
 
     async ping() {
@@ -134,7 +132,7 @@ class Connection extends EventEmitter {
 
         await this.request('public/test');
         clearInterval(timeout);
-    };
+    }
 
     // terminate a connection and immediatly try to reconnect
     async terminate() {
@@ -143,7 +141,7 @@ class Connection extends EventEmitter {
         this.ws.terminate();
         this.authenticated = false;
         this.connected = false;
-    };
+    }
 
     // end a connection
     async end() {
@@ -158,7 +156,12 @@ class Connection extends EventEmitter {
         this.authenticated = false;
         this.connected = false;
         this.ws.terminate();
+    }
+
+    wait(n) {
+        return new Promise(r => setTimeout(r, n))
     };
+
 
     async reconnect() {
         this.reconnecting = true;
@@ -167,7 +170,7 @@ class Connection extends EventEmitter {
         let hook;
         this.afterReconnect = new Promise(r => hook = r);
         this.isReady = new Promise((r => this.isReadyHook = r));
-        await wait(5000);
+        await this.wait(5000);
         if (this.DEBUG)
             this.log(new Date, ' RECONNECTING...');
         let p = await this.connect();
@@ -179,7 +182,7 @@ class Connection extends EventEmitter {
         });
 
         return p;
-    };
+    }
 
     async connect() {
         await this._connect();
@@ -192,7 +195,7 @@ class Connection extends EventEmitter {
         //this.on('test_request', this.handleWSMessage);
         //});
 
-    };
+    }
 
     async authenticate() {
         if (!this.connected) {
@@ -241,7 +244,7 @@ class Connection extends EventEmitter {
         let safeRefresh = Math.min(refreshTime, (Math.pow(2, 31) - 1));
         setTimeout(this.refreshTokenFn, safeRefresh);
         //setTimeout(this.refreshTokenFn, resp.result.expires_in - 10 * 60 * 1000);
-    };
+    }
 
     async refreshTokenFn() {
         this.log(`Refreshing Token Now.`);
@@ -275,25 +278,28 @@ class Connection extends EventEmitter {
         this.log(`Refresh Token Expires On: ${expireDate.toString()}`);
         let safeRefresh = Math.min(refreshTime, (Math.pow(2, 31) - 1));
         setTimeout(this.refreshTokenFn, safeRefresh);
-    };
-
-    findRequest(id) {
-        for (let i = 0; i < this.inflightQueue.length; i++) {
-            const req = this.inflightQueue[i];
-            if (id === req.id) {
-                this.inflightQueue.splice(i, 1);
-                return req;
-            }
-        }
     }
 
-    async handleWSMessage (e) {
+    findRequest(id) {
+        let foundReq = false;
+        for (let i = 0; i < this.inflightQueue.length; i++) {
+            let req = this.inflightQueue[i];
+            if (id === req.id) {
+                this.inflightQueue.splice(i, 1);
+                foundReq = req;
+                break;
+            }
+        }
+        return foundReq;
+    }
+
+    async handleWSMessage(e) {
         let payload;
 
         try {
             payload = JSON.parse(e.data);
         } catch (e) {
-            console.error('deribit send bad json', e);
+            console.error('deribit sent bad json', e);
         }
 
         if (payload.method === 'subscription') {
@@ -314,7 +320,7 @@ class Connection extends EventEmitter {
             })
         }
 
-        const request = this.findRequest(payload.id);
+        let request = this.findRequest(payload.id);
 
         if (!request) {
             return console.error('received response to request not send:', payload);
@@ -323,9 +329,9 @@ class Connection extends EventEmitter {
         payload.requestedAt = request.requestedAt;
         payload.receivedAt = +new Date;
         request.onDone(payload);
-    };
+    }
 
-    async sendMessage (payload, fireAndForget) {
+    async sendMessage(payload, fireAndForget) {
         if (!this.connected) {
             if (!this.reconnecting) {
                 throw new Error('Not connected.')
@@ -379,10 +385,10 @@ class Connection extends EventEmitter {
     */
         //clearInterval(this.pingInterval);
         return p;
-    };
+    }
 
 
-    async request (path, params) {
+    async request(path, params) {
 
         if (!this.connected) {
             if (!this.reconnecting) {
@@ -407,9 +413,9 @@ class Connection extends EventEmitter {
 
         //this.log(`Sending Message: `, message);
         return this.sendMessage(message);
-    };
+    }
 
-    unsubscribe (type, channel) {
+    unsubscribe(type, channel) {
 
         if (!this.connected) {
             throw new Error('Not connected.');
@@ -427,10 +433,10 @@ class Connection extends EventEmitter {
         };
 
         return this.sendMessage(message);
-    };
+    }
 
 
-    subscribe (type, channel) {
+    subscribe(type, channel) {
 
         this.subscriptions.push({type, channel});
 

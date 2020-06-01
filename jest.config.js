@@ -5,6 +5,8 @@
 // For a detailed explanation regarding each configuration property, visit:
 // https://jestjs.io/docs/en/configuration.html
 
+//'use strict';
+
 module.exports = {
   // All imported modules in your tests should be mocked automatically
   // automock: false,
@@ -43,10 +45,10 @@ module.exports = {
   // An object that configures minimum threshold enforcement for coverage results
   coverageThreshold: {
       "global": {
-          "branches": 10,
-          "functions": 10,
-          "lines": 10,
-          "statements": 10
+          "branches": 0,
+          "functions": 0,
+          "lines": 0,
+          "statements": 0
       }
   },
 
@@ -134,7 +136,9 @@ module.exports = {
   // setupFiles: [],
 
   // A list of paths to modules that run some code to configure or set up the testing framework before each test
-  // setupFilesAfterEnv: [],
+   setupFilesAfterEnv: [
+       "<rootDir>/setupTests.js"
+   ],
 
   // A list of paths to snapshot serializer modules Jest should use for snapshot testing
   // snapshotSerializers: [],

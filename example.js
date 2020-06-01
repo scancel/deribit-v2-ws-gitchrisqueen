@@ -1,4 +1,4 @@
-const Deribit = require('./');
+const Deribit = require('./connection');
 
 const key = 'x';
 const secret = 'y';

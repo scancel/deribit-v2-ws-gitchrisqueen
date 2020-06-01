@@ -6,7 +6,8 @@
   "scripts": {
     "pretest": "npm install",
     "test": "jest",
-    "testdebug": "jest --detectOpenHandles",
+    "testdebug": "node --unhandled-rejections=strict --trace-warnings --expose-gc node_modules/.bin/jest --no-cache --detectOpenHandles --runInBand",
+    "unittestdebug": "node --unhandled-rejections=strict --trace-warnings --expose-gc node_modules/.bin/jest --no-cache --detectOpenHandles --runInBand unit",
     "killall": "killall node && killall jest",
     "preversion": "npm run test",
     "version": "",
@@ -30,9 +31,13 @@
   },
   "homepage": "https://github.com/gitchrisqueen/deribit-v2-ws-gitchrisqueen#readme",
   "dependencies": {
-    "ws": "^6.2.0"
+    "ws": "*",
+    "events": "*"
   },
   "devDependencies": {
-    "jest": "^26.0.1"
+    "@babel/core": "*",
+    "@babel/preset-env": "*",
+    "babel-jest": "*",
+    "jest": "*"
   }
 }
