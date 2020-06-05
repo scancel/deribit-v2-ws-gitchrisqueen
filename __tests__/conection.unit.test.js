@@ -43,7 +43,7 @@ describe('constructor()', () => {
 
 });
 
-/*
+
 describe('connect()', () => {
     beforeAll(async () => {
         return await con.connect();
@@ -63,6 +63,4 @@ describe('connect()', () => {
     });
 
 });
-
- */
 

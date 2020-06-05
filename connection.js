@@ -66,16 +66,24 @@ class Connection extends EventEmitter {
 
         let promise = new Promise((resolve, reject) => {
             this.ws = new WebSocket(`wss://${this.WSdomain}/ws/api/v2`);
-            this.ws.onmessage = this.handleWSMessage;
+            this.ws.onmessage =  (message) => {
+               return this.handleWSMessage(message);
+            }
 
             this.ws.onopen = () => {
                 this.handleOnOpen();
                 resolve();
             }
-            this.ws.onerror = this.handleError;
-            this.ws.on('error', this.handleError);
 
-            this.ws.onclose = async e => {
+
+            //this.ws.onerror = this.handleError;
+            //this.ws.on('error', this.handleError);
+            this.ws.onerror = (error) => {
+                this.handleError(error);
+            }
+
+
+            this.ws.onclose = async () => {
                 if (this.DEBUG)
                     this.log(new Date + '-> CLOSED CON');
 
@@ -623,5 +631,4 @@ class Connection extends EventEmitter {
     }
 
 }
-
 module.exports = Connection;
