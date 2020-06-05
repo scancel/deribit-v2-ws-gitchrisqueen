@@ -15,7 +15,7 @@ beforeAll(async () => {
     const key = '3hjn18oV';
     const secret = '8q5CotqH3hZv-01-CM-X00kT2lNWdMbPcOfbx0xZ8b4';
     const domain = 'test.deribit.com';
-    const debug = true;
+    const debug = false;
     con = new Connection({key, secret, domain, debug});
     /*
     await con.connect().catch((error) => {
@@ -28,7 +28,7 @@ beforeAll(async () => {
 });
 
 afterAll(() => {
-    //return con.end();
+    return con.end();
 });
 
 describe('constructor()', () => {
@@ -46,7 +46,7 @@ describe('constructor()', () => {
 
 describe('connect()', () => {
     beforeAll(async () => {
-        return await con.connect();
+        await con.connect();
     });
 
     test('expects property connected = true', () => {
