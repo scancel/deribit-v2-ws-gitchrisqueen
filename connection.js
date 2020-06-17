@@ -220,8 +220,7 @@ class Connection extends EventEmitter {
             'params': {
                 'grant_type': 'client_credentials',
                 'client_id': this.key,
-                'client_secret': this.secret,
-                'scope': 'session:tradingapp_docker_nodejs' + date
+                'client_secret': this.secret
             }
         });
 
