@@ -55,7 +55,7 @@ class Connection extends EventEmitter {
 
     handleOnOpen(){
         this.connected = true;
-        this.pingInterval = setInterval(this.ping, (this.heartBeat * 1000) * 5); // 5X the heart beat without a ping means connection is dead
+        this.pingInterval = setInterval(this.ping.bind(this), (this.heartBeat * 1000) * 5); // 5X the heart beat without a ping means connection is dead
         this.isReadyHook();
     }
 
@@ -250,7 +250,7 @@ class Connection extends EventEmitter {
         let expireDate = new Date(expireDateMilli);
         this.log(`Refresh Token Expires On: ${expireDate.toString()}`);
         let safeRefresh = Math.min(refreshTime, (Math.pow(2, 31) - 1));
-        setTimeout(this.refreshTokenFn, safeRefresh);
+        setTimeout(this.refreshTokenFn.bind(this), safeRefresh);
         //setTimeout(this.refreshTokenFn, resp.result.expires_in - 10 * 60 * 1000);
     }
 
@@ -285,7 +285,7 @@ class Connection extends EventEmitter {
         let expireDate = new Date(expireDateMilli);
         this.log(`Refresh Token Expires On: ${expireDate.toString()}`);
         let safeRefresh = Math.min(refreshTime, (Math.pow(2, 31) - 1));
-        setTimeout(this.refreshTokenFn, safeRefresh);
+        setTimeout(this.refreshTokenFn.bind(this), safeRefresh);
     }
 
     findRequest(id) {
