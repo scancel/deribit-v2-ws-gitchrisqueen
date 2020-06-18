@@ -38,7 +38,7 @@ class Connection extends EventEmitter {
             message = message + JSON.stringify(variable);
         }
         if (this.DEBUG) {
-            console.log(message);
+            console.log("DERIBIT - " + message);
         }
     }
 
@@ -48,7 +48,7 @@ class Connection extends EventEmitter {
 
     handleError(e) {
         if (this.DEBUG) {
-            this.log(new Date, `Handle ERROR: ${JSON.stringify(e)}`);
+            this.log(new Date(), `Handle ERROR: ${JSON.stringify(e)}`);
         }
         throw new Error(e);
     }
@@ -134,7 +134,7 @@ class Connection extends EventEmitter {
 
         const timeout = setTimeout(() => {
             if (this.DEBUG)
-                this.log(new Date, ' NO PING RESPONSE');
+                this.log(new Date(), ' NO PING RESPONSE');
             this.terminate();
         }, (this.heartBeat * 1000)); // If 5X the Heartbeat goes by then we will terminate the connection because it is dead
 
@@ -145,7 +145,7 @@ class Connection extends EventEmitter {
     // terminate a connection and immediatly try to reconnect
     async terminate() {
         if (this.DEBUG)
-            this.log(new Date, ' TERMINATED WS CON');
+            this.log(new Date(), ' TERMINATED WS CON');
         this.ws.terminate();
         this.authenticated = false;
         this.connected = false;
@@ -154,7 +154,7 @@ class Connection extends EventEmitter {
     // end a connection
     async end() {
         if (this.DEBUG)
-            this.log(new Date, ' ENDED WS CON');
+            this.log(new Date(), ' ENDED WS CON');
         this.subscriptions.forEach(sub => {
             this.unsubscribe(sub.type, sub.channel);
         });
@@ -180,7 +180,7 @@ class Connection extends EventEmitter {
         this.isReady = new Promise((r => this.isReadyHook = r));
         await this.wait(5000);
         if (this.DEBUG)
-            this.log(new Date, ' RECONNECTING...');
+            this.log(new Date(), ' RECONNECTING...');
         let p = await this.connect();
         hook();
         this.isReadyHook();
@@ -225,7 +225,7 @@ class Connection extends EventEmitter {
         });
 
         if (resp.error) {
-            throw new Error(resp.error.message);
+            throw new Error('DERIBIT socket ' + resp.error.message);
         }
 
         this.token = resp.result.access_token;
@@ -233,7 +233,7 @@ class Connection extends EventEmitter {
         this.authenticated = true;
 
         if (!resp.result.expires_in) {
-            throw new Error('Deribit did not provide expiry details');
+            throw new Error('DERIBIT did not provide expiry details');
         }
 
         /*
@@ -269,7 +269,7 @@ class Connection extends EventEmitter {
         this.refreshToken = resp.result.refresh_token;
 
         if (!resp.result.expires_in) {
-            throw new Error('Deribit did not provide expiry details');
+            throw new Error('DERIBIT did not provide expiry details');
         }
 
         /*
@@ -306,7 +306,7 @@ class Connection extends EventEmitter {
         try {
             payload = JSON.parse(e.data);
         } catch (e) {
-            console.error('deribit sent bad json', e);
+            console.error('DERIBIT sent bad json', e);
         }
 
         if (payload.method === 'subscription') {
@@ -330,7 +330,7 @@ class Connection extends EventEmitter {
         let request = this.findRequest(payload.id);
 
         if (!request) {
-            return console.error('received response to request not send:', payload);
+            return console.error('DERIBIT received response to request not send:', payload);
         }
 
         payload.requestedAt = request.requestedAt;
@@ -341,7 +341,7 @@ class Connection extends EventEmitter {
     async sendMessage(payload, fireAndForget) {
         if (!this.connected) {
             if (!this.reconnecting) {
-                throw new Error('Not connected.')
+                throw new Error('DERIBIT socket Not connected.')
             }
 
             await this.afterReconnect;
@@ -356,7 +356,7 @@ class Connection extends EventEmitter {
                 connectionAborted = rj;
 
                 this.inflightQueue.push({
-                    requestedAt: +new Date,
+                    requestedAt: +new Date(),
                     id: payload.id,
                     onDone,
                     connectionAborted
@@ -399,7 +399,7 @@ class Connection extends EventEmitter {
 
         if (!this.connected) {
             if (!this.reconnecting) {
-                throw new Error('Not connected.');
+                throw new Error('DERIBIT socket is Not connected.');
             }
 
             await this.afterReconnect;
@@ -407,7 +407,7 @@ class Connection extends EventEmitter {
 
         if (path.startsWith('private')) {
             if (!this.authenticated) {
-                throw new Error('Not authenticated.');
+                throw new Error('DERIBIT socket Not authenticated.');
             }
         }
 
@@ -425,9 +425,9 @@ class Connection extends EventEmitter {
     unsubscribe(type, channel) {
 
         if (!this.connected) {
-            throw new Error('Not connected.');
+            throw new Error('DERIBIT socket Not connected.');
         } else if (type === 'private' && !this.authenticated) {
-            throw new Error('Not authenticated.');
+            throw new Error('DERIBIT socket Not authenticated.');
         }
 
         const message = {
@@ -448,9 +448,9 @@ class Connection extends EventEmitter {
         this.subscriptions.push({type, channel});
 
         if (!this.connected) {
-            throw new Error('Not connected.');
+            throw new Error('DERIBIT socket Not connected.');
         } else if (type === 'private' && !this.authenticated) {
-            throw new Error('Not authenticated.');
+            throw new Error('DERIBIT socket Not authenticated.');
         }
 
         const message = {
@@ -472,7 +472,7 @@ class Connection extends EventEmitter {
             })
             .catch((e) => {
                 this.log(`Could not return after cancel_order_by_label() Error : `, e.message);
-                //throw new Error(`Could not return after cancel_order_by_label()`);
+                //throw new Error(`DERIBIT socket Could not return after cancel_order_by_label()`);
             });
     }
 
@@ -484,7 +484,7 @@ class Connection extends EventEmitter {
             })
             .catch((e) => {
                 this.log(`Could not return after close_position() Error: `, e.message);
-                throw new Error(`Could not return after close_position()`);
+                throw new Error(`DERIBIT socket Could not return after close_position()`);
             });
     }
 
@@ -495,7 +495,7 @@ class Connection extends EventEmitter {
             })
             .catch((e) => {
                 this.log(`Could not return after getPosition() : `, e.message);
-                throw new Error(`Could not return after getPosition()`);
+                throw new Error(`DERIBIT socket Could not return after getPosition()`);
             });
     }
 
@@ -508,7 +508,7 @@ class Connection extends EventEmitter {
         })
             .catch((e) => {
                 this.log(`Could not return after get_tradingview_chart_data() Error: `, e.message)
-                throw new Error(`Could not return after get_tradingview_chart_data()`);
+                throw new Error(`DERIBIT socket Could not return after get_tradingview_chart_data()`);
             });
     }
 
@@ -516,7 +516,7 @@ class Connection extends EventEmitter {
         return await this.request('private/buy', options)
             .catch((e) => {
                 this.log(`Could not return after buy() Error: `, e.message);
-                throw new Error(`Could not return after buy()`);
+                throw new Error(`DERIBIT socket Could not return after buy()`);
             });
     }
 
@@ -524,7 +524,7 @@ class Connection extends EventEmitter {
         return await this.request('private/sell', options)
             .catch((e) => {
                 this.log(`Could not return after sell() Error: `, e.message);
-                throw new Error(`Could not return after sell()`);
+                throw new Error(`DERIBIT socket Could not return after sell()`);
             });
         ;
     }
@@ -536,7 +536,7 @@ class Connection extends EventEmitter {
         })
             .catch((e) => {
                 this.log(`Could not return after get_open_orders_by_instrument() Error: `, e.message);
-                throw new Error(`Could not return after get_open_orders_by_instrument()`);
+                throw new Error(`DERIBIT socket Could not return after get_open_orders_by_instrument()`);
             });
     }
 
@@ -548,7 +548,7 @@ class Connection extends EventEmitter {
         })
             .catch(e => {
                 this.log(`Could not return after get_stop_order_history() Error: `, e.message);
-                throw new Error(`Could not return after get_stop_order_history()`);
+                throw new Error(`DERIBIT socket Could not return after get_stop_order_history()`);
             });
     }
 
@@ -566,7 +566,7 @@ class Connection extends EventEmitter {
         return await this.request(`private/edit`, orderEditOptions)
             .catch((e) => {
                 this.log(`Could not return after editOrder() : `, e.message);
-                throw new Error(`Could not return after editOrder()`);
+                throw new Error(`DERIBIT socket Could not return after editOrder()`);
             });
     }
 
@@ -574,7 +574,7 @@ class Connection extends EventEmitter {
         return await this.request('private/enable_cancel_on_disconnect')
             .catch((e) => {
                 this.log(`Could not return after enable_cancel_on_disconnect() Error: `, e.message);
-                throw new Error(`Could not return after enable_cancel_on_disconnect()`);
+                throw new Error(`DERIBIT socket Could not return after enable_cancel_on_disconnect()`);
             });
     }
 
@@ -582,7 +582,7 @@ class Connection extends EventEmitter {
         return await this.request('private/disable_cancel_on_disconnect')
             .catch((e) => {
                 this.log(`Could not return after disable_cancel_on_disconnect() Error: `, e.message);
-                throw new Error(`Could not return after disable_cancel_on_disconnect()`);
+                throw new Error(`DERIBIT socket Could not return after disable_cancel_on_disconnect()`);
             });
     }
 
@@ -593,7 +593,7 @@ class Connection extends EventEmitter {
                 'extended': extended
             }).catch((e) => {
             this.log(`Could not return after get_account_summary() Error: `, e.message);
-            throw new Error(`Could not return after get_account_summary()`);
+            throw new Error(`DERIBIT socket Could not return after get_account_summary()`);
         });
     }
 
@@ -605,7 +605,7 @@ class Connection extends EventEmitter {
                 'expired': expired
             }).catch((e) => {
             this.log(`Could not return after get_instruments() Error: `, e.message);
-            throw new Error(`Could not return after get_instruments()`);
+            throw new Error(`DERIBIT socket Could not return after get_instruments()`);
         });
     }
 
@@ -615,7 +615,7 @@ class Connection extends EventEmitter {
                 'instrument_name': instrument
             }).catch((e) => {
             this.log(`Could not return after get_book_summary_by_instrument() Error: `, e.message);
-            throw new Error(`Could not return after get_book_summary_by_instrument()`);
+            throw new Error(`DERIBIT socket Could not return after get_book_summary_by_instrument()`);
         });
     }
 
@@ -625,7 +625,7 @@ class Connection extends EventEmitter {
                 'instrument_name': instrument
             }).catch((e) => {
             this.log(`Could not return after get_ticker() Error: `, e.message);
-            throw new Error(`Could not return after get_ticker()`);
+            throw new Error(`DERIBIT socket Could not return after get_ticker()`);
         });
     }
 
