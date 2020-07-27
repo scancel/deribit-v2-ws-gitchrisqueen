@@ -106,7 +106,6 @@ class Connection extends EventEmitter {
                     this.log(`Cannot properly reconnect to Deribit. Exiting Node and restarting Docker container.`);
                     this.end();
                     reject();
-                    process.exit(1);
                 }
 
 
