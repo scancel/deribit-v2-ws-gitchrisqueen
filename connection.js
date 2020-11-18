@@ -6,9 +6,11 @@ const WebSocket = require('ws');
 const EventEmitter = require('events');
 
 class Connection extends EventEmitter {
-    constructor({key, secret, domain = 'www.deribit.com', debug = false}) {
+    constructor({key, secret, domain, debug = false}) {
         super();
-
+        if(!domain){
+            domain = 'www.deribit.com'
+        }
         this.reconnectingCount = 0;
         this.DEBUG = debug;
         this.heartBeat = 60 * 1; //1 minutes in seconds
@@ -67,7 +69,7 @@ class Connection extends EventEmitter {
         let promise = new Promise((resolve, reject) => {
             this.ws = new WebSocket(`wss://${this.WSdomain}/ws/api/v2`);
             this.ws.onmessage =  (message) => {
-               return this.handleWSMessage(message);
+                return this.handleWSMessage(message);
             }
 
             this.ws.onopen = () => {
