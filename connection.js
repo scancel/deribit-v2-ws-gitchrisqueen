@@ -11,6 +11,7 @@ class Connection extends EventEmitter {
         if(!domain){
             domain = 'www.deribit.com'
         }
+        this.benchmarks = {};
         this.reconnectingCount = 0;
         this.DEBUG = debug;
         this.heartBeat = 60 * 1; //1 minutes in seconds
@@ -52,12 +53,20 @@ class Connection extends EventEmitter {
         if (this.DEBUG) {
             this.log(new Date(), `Handle ERROR: ${JSON.stringify(e)}`);
         }
+        //Handle system maintenance
+        if(e.error && e.code === 11051){
+            setTimeout(()=>{
+                this.log("Handling system maintenance by reconnecting");
+                this.ws.onclose();
+            }, 5 * 60 * 1000);
+        }
         throw new Error(e);
     }
 
     handleOnOpen(){
         this.connected = true;
         this.pingInterval = setInterval(this.ping.bind(this), (this.heartBeat * 1000) * 5); // 5X the heart beat without a ping means connection is dead
+        this.calcInterval = setInterval(this.printBenchmarks.bind(this), 10 * 1000);
         this.isReadyHook();
     }
 
@@ -101,6 +110,7 @@ class Connection extends EventEmitter {
                 this.inflightQueue = [];
                 this.authenticated = false;
                 this.connected = false;
+                clearInterval(this.calcInterval);
                 clearInterval(this.pingInterval);
                 if (this.reconnectingCount < 3) {
                     this.reconnect();
@@ -123,6 +133,7 @@ class Connection extends EventEmitter {
             this.inflightQueue = [];
             this.authenticated = false;
             this.connected = false;
+            clearInterval(this.calcInterval);
             clearInterval(this.pingInterval);
             return this.reconnect();
         });
@@ -159,6 +170,7 @@ class Connection extends EventEmitter {
         this.subscriptions.forEach(sub => {
             this.unsubscribe(sub.type, sub.channel);
         });
+        clearInterval(this.calcInterval);
         clearInterval(this.pingInterval);
         this.ws.onclose = undefined;
         this.request('private/logout', {access_token: this.token});
@@ -397,7 +409,7 @@ class Connection extends EventEmitter {
 
 
     async request(path, params) {
-
+        const start = Date.now();
         if (!this.connected) {
             if (!this.reconnecting) {
                 throw new Error('DERIBIT socket is Not connected.');
@@ -420,7 +432,32 @@ class Connection extends EventEmitter {
         };
 
         //this.log(`Sending Message: `, message);
-        return this.sendMessage(message);
+        const resultPromise = this.sendMessage(message);
+        resultPromise.then(()=>{
+            const end = Date.now();
+            if(!this.benchmarks[path]){
+                this.benchmarks[path] = [];
+            }
+            this.benchmarks[path].push({duration: end - start, start: new Date(start), end: new Date(end)});
+        });
+        return resultPromise;
+    }
+
+    printBenchmarks(){
+        const summeries = [];
+        for (let action in this.benchmarks) {
+            if (action !== "undefined" && this.benchmarks.hasOwnProperty(action)) {
+                const durations = this.benchmarks[action].map(t => t.duration);
+                this.benchmarks[action].summary = {
+                    min: Math.min(...durations),
+                    max: Math.max(...durations),
+                    avg: durations.reduce((a, b) => a + b) / durations.length,
+                    count: durations.length
+                };
+                summeries.push(this.benchmarks[action].summary);
+            }
+        }
+        console.log("Deribit WS benchmarks: " + JSON.stringify(summeries));
     }
 
     unsubscribe(type, channel) {
