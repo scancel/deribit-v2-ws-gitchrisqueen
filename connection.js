@@ -454,7 +454,7 @@ class Connection extends EventEmitter {
                     avg: durations.reduce((a, b) => a + b) / durations.length,
                     count: durations.length
                 };
-                summeries.push(this.benchmarks[action].summary);
+                summeries.push({action, benchmarks: this.benchmarks[action].summary});
             }
         }
         console.log("Deribit WS benchmarks: " + JSON.stringify(summeries));
